@@ -16,7 +16,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    // --- Hardcoded Fallback Users (For Vercel Persistence) ---
+    const HARDCODED_USERS = [
+      {
+        id: "hardcoded-super-admin",
+        email: "superadmin@goretail.com",
+        password: "$2b$12$suOAwlqBnqeA7j3mf39qiuhS9M13eI3FLo3vp.WyFlaAvYabeQYhi", // SuperAdmin@123
+        name: "System Administrator",
+        role: "SUPER_ADMIN",
+        storeName: "GoCo Platform",
+      },
+      {
+        id: "hardcoded-store-admin",
+        email: "admin1@freshcafe.com",
+        password: "$2b$12$m3TM4FVMrGXrGXC4rbeWtOTk7OAoQiFWMV36ndsa8XDiG174E79O2", // Admin@123
+        name: "Sarah Chen",
+        role: "ADMIN",
+        storeName: "Fresh Organic Café",
+      }
+    ];
+
+    let user = await prisma.user.findUnique({ where: { email } });
+    
+    // If not in DB, check hardcoded users
+    if (!user) {
+      const fallbackUser = HARDCODED_USERS.find(u => u.email === email);
+      if (fallbackUser) {
+        user = fallbackUser as any;
+      }
+    }
+
     if (!user) {
       return NextResponse.json(
         { success: false, error: "Invalid credentials" },
