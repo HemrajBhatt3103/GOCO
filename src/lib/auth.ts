@@ -69,7 +69,7 @@ export function createSessionCookie(token: string): {
     value: token,
     options: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && !process.env.NEXT_PUBLIC_APP_URL?.includes("localhost"),
       sameSite: "lax",
       maxAge: COOKIE_MAX_AGE,
       path: "/",
@@ -83,7 +83,7 @@ export function createLogoutCookie() {
     value: "",
     options: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production" && !process.env.NEXT_PUBLIC_APP_URL?.includes("localhost"),
       sameSite: "lax" as const,
       maxAge: 0,
       path: "/",

@@ -40,8 +40,9 @@ function LoginContent() {
         toast("Welcome back! Signing you in...", "success");
         const role: string = data.data.role;
         const dest = rawRedirect ?? getDefaultRedirect(role);
+        console.log("Login success, redirecting to:", dest);
         router.push(dest);
-        router.refresh();
+        setTimeout(() => router.refresh(), 100);
       } else {
         const errorMsg = data.error ?? "Invalid credentials";
         setError(errorMsg);
