@@ -1,0 +1,123 @@
+// GoRetail — GoCo (GoCommerce) by Lazlle & Co.
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  password     String
+  name         String
+  role         String           @default("ADMIN")
+  storeName    String?
+  storeDesc    String?
+  storeType    String?
+  is2FAEnabled Boolean          @default(false)
+  secretKey    String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  subscription Subscription?
+  products     Product[]
+  customers    Customer[]
+  leads        NonPurchaseLead[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id           String         @id @default(cuid())
+  name         String
+  slug         String         @unique
+  description  String?
+  price        Float
+  comparePrice Float?
+  sku          String?
+  inStock      Boolean        @default(true)
+  featured     Boolean        @default(false)
+  categoryId   String?
+  storeId      String?
+  category     Category?      @relation(fields: [categoryId], references: [id])
+  store        User?          @relation(fields: [storeId], references: [id])
+  images       ProductImage[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  isPrimary Boolean  @default(false)
+  order     Int      @default(0)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model StoreSettings {
+  id             String   @id @default(cuid())
+  storeName      String   @default("GoRetail Store")
+  storeTagline   String?
+  storeLogo      String?
+  currency       String   @default("USD")
+  currencySymbol String   @default("$")
+  primaryColor   String   @default("#000000")
+  accentColor    String   @default("#6366f1")
+  updatedAt      DateTime @updatedAt
+}
+
+model Customer {
+  id               String    @id @default(cuid())
+  name             String
+  phone            String?
+  email            String?
+  businessName     String?
+  address          String?
+  city             String?
+  notes            String?
+  status           String    @default("Lead")
+  storeId          String?
+  store            User?     @relation(fields: [storeId], references: [id])
+  totalPurchases   Float     @default(0)
+  lastPurchaseDate DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model NonPurchaseLead {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  reason    String?
+  message   String?
+  storeId   String?
+  store     User?    @relation(fields: [storeId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  storeId   String   @unique
+  planName  String   @default("Starter")
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  store     User     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
