@@ -2,9 +2,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Modal from "@/components/ui/Modal";
+import { useToast } from "@/components/ui/Toast";
 
 export default function LogoutButton({ className, redirectTo = "/login" }: { className?: string; redirectTo?: string }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   async function performLogout() {
@@ -12,6 +14,7 @@ export default function LogoutButton({ className, redirectTo = "/login" }: { cla
       await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
       // close modal regardless
       setConfirmOpen(false);
+      toast("You have been signed out.", "success");
       // navigate to login page so user can pick role
       router.push(redirectTo || "/login");
       router.refresh();

@@ -3,12 +3,14 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useToast } from "@/components/ui/Toast";
 
 type Role = "SUPER_ADMIN" | "ADMIN" | null;
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const rawRedirect = searchParams.get("redirect");
 
   const [selectedRole, setSelectedRole] = useState<Role>(null);
@@ -35,15 +37,20 @@ function LoginContent() {
       });
       const data = await res.json();
       if (data.success) {
+        toast("Welcome back! Signing you in...", "success");
         const role: string = data.data.role;
         const dest = rawRedirect ?? getDefaultRedirect(role);
         router.push(dest);
         router.refresh();
       } else {
-        setError(data.error ?? "Invalid credentials");
+        const errorMsg = data.error ?? "Invalid credentials";
+        setError(errorMsg);
+        toast(errorMsg, "error");
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      const errorMsg = "Something went wrong. Please try again.";
+      setError(errorMsg);
+      toast(errorMsg, "error");
     } finally {
       setLoading(false);
     }

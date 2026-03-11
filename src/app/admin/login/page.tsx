@@ -3,10 +3,12 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useToast } from "@/components/ui/Toast";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const redirect = searchParams.get("redirect") ?? "/dashboard";
 
   const [email, setEmail] = useState("");
@@ -27,13 +29,18 @@ function LoginForm() {
       });
       const data = await res.json();
       if (data.success) {
+        toast("Login successful! Redirecting...", "success");
         router.push(redirect);
         router.refresh();
       } else {
-        setError(data.error ?? "Login failed");
+        const errorMsg = data.error ?? "Login failed";
+        setError(errorMsg);
+        toast(errorMsg, "error");
       }
     } catch {
-      setError("An error occurred. Please try again.");
+      const errorMsg = "An error occurred. Please try again.";
+      setError(errorMsg);
+      toast(errorMsg, "error");
     } finally {
       setLoading(false);
     }
