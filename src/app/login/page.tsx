@@ -37,12 +37,15 @@ function LoginContent() {
       });
       const data = await res.json();
       if (data.success) {
-        toast("Welcome back! Signing you in...", "success");
         const role: string = data.data.role;
         const dest = rawRedirect ?? getDefaultRedirect(role);
-        console.log("Login success, redirecting to:", dest);
-        router.push(dest);
-        setTimeout(() => router.refresh(), 100);
+        
+        toast(`Authorized as ${role}. Redirecting to ${dest}...`, "success");
+        
+        // Use window.location for a hard redirect to ensure cookies are fresh
+        setTimeout(() => {
+          window.location.assign(dest);
+        }, 800);
       } else {
         const errorMsg = data.error ?? "Invalid credentials";
         setError(errorMsg);

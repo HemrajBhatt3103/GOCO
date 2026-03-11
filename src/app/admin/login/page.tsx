@@ -30,8 +30,9 @@ function LoginForm() {
       const data = await res.json();
       if (data.success) {
         toast("Login successful! Redirecting...", "success");
-        router.push(redirect);
-        router.refresh();
+        setTimeout(() => {
+          window.location.assign(redirect);
+        }, 800);
       } else {
         const errorMsg = data.error ?? "Login failed";
         setError(errorMsg);

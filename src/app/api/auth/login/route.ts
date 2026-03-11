@@ -33,6 +33,22 @@ export async function POST(req: NextRequest) {
         name: "Sarah Chen",
         role: "ADMIN",
         storeName: "Fresh Organic Café",
+      },
+      {
+        id: "hardcoded-store-admin-2",
+        email: "admin2@urbanfashion.com",
+        password: "$2b$12$m3TM4FVMrGXrGXC4rbeWtOTk7OAoQiFWMV36ndsa8XDiG174E79O2", // Admin@123
+        name: "Marcus Rodriguez",
+        role: "ADMIN",
+        storeName: "Urban Fashion Boutique",
+      },
+      {
+        id: "hardcoded-store-admin-3",
+        email: "admin3@techgadgets.com",
+        password: "$2b$12$m3TM4FVMrGXrGXC4rbeWtOTk7OAoQiFWMV36ndsa8XDiG174E79O2", // Admin@123
+        name: "Priya Sharma",
+        role: "ADMIN",
+        storeName: "Tech Gadgets Hub",
       }
     ];
 
