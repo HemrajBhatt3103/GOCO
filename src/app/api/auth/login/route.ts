@@ -42,7 +42,9 @@ export async function POST(req: NextRequest) {
     if (!user) {
       const fallbackUser = HARDCODED_USERS.find(u => u.email === email);
       if (fallbackUser) {
-        user = fallbackUser as any;
+        // Cast to unknown first then to any to bypass strict checks if necessary, 
+        // or just match the expected properties for the logic below.
+        user = fallbackUser as unknown as typeof user;
       }
     }
 
